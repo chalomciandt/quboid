@@ -1,0 +1,75 @@
+body {
+  font: 14px "Century Gothic", Futura, sans-serif;
+  margin: 20px;
+  background-color: #011627;
+}
+
+ol, ul {
+  padding-left: 30px;
+}
+
+.board-row:after {
+  clear: both;
+  content: "";
+  display: table;
+}
+
+.status {
+  font-size: 28px;
+  color: #FDFFFC;
+  margin-bottom: 10px;
+}
+
+.square {
+  background: #011627;
+  border: 2px solid #FDFFFC;
+  float: left;
+  font-size: 64px;
+  font-weight: bold;
+  line-height: 94px;
+  height: 94px;
+  margin-right: -1px;
+  margin-top: -1px;
+  padding: 0;
+  text-align: center;
+  width: 94px;
+}
+
+.square.square-X, .status-X {
+  color: #2EC4B6;
+}
+
+.square.square-O, .status-O {
+  color: #FF9F1C;
+}
+
+.status-DRAW {
+  color: #E71D36;
+}
+
+.square:focus {
+  outline: none;
+}
+
+.kbd-navigation .square:focus {
+  background: #ddd;
+}
+
+.game {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+}
+
+.game-info {
+  margin-left: 20px;
+}
+
+/* PALLETE
+#011627 background
+#FDFFFC foreground
+#2EC4B6 X
+#FF9F1C O
+#E71D36 DRAW
+*/
