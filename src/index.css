@@ -14,6 +14,10 @@ ol, ul {
   display: table;
 }
 
+.board-layer {
+  margin-bottom: 15px;
+}
+
 .status {
   font-size: 28px;
   color: #FDFFFC;
@@ -24,15 +28,15 @@ ol, ul {
   background: #011627;
   border: 2px solid #FDFFFC;
   float: left;
-  font-size: 64px;
+  font-size: 24px;
   font-weight: bold;
-  line-height: 94px;
-  height: 94px;
+  line-height: 32px;
+  height: 32px;
   margin-right: -1px;
   margin-top: -1px;
   padding: 0;
   text-align: center;
-  width: 94px;
+  width: 32px;
 }
 
 .square.square-X, .status-X {
@@ -60,6 +64,7 @@ ol, ul {
   align-items: center;
   justify-content: center;
   flex-direction: row;
+  height: 100%;
 }
 
 .game-info {
