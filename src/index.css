@@ -47,6 +47,10 @@ ol, ul {
   color: #FF9F1C;
 }
 
+.square-last {
+  background: #441627;
+}
+
 .status-DRAW {
   color: #E71D36;
 }

@@ -5,7 +5,7 @@ import './index.css';
 function Square(props) {
   return (
     <button
-      className={`square square-${props.value}`}
+      className={`square square-${props.value} ${props.last ? 'square-last' : ''} `}
       onClick={props.onClick}
     >
       {props.value}
@@ -22,7 +22,6 @@ class BoardRow extends Component {
     return (
       <div className="board-row">
         {this.range(start, size).map(i => {
-          console.log(i)
           return this.renderSquare(i)
         })}
       </div>
@@ -31,8 +30,10 @@ class BoardRow extends Component {
   renderSquare(i) {
     return (
       <Square
+        key={i}
         value={this.props.squares[i]}
         onClick={() => this.props.onClick(i)}
+        last={this.props.last === i}
       />
     );
   }
@@ -44,20 +45,13 @@ class Board extends Component {
     super(props);
     this.state = {
       squares: Array(4 * 4 * 4).fill(null),
-      xIsNext: true
+      xIsNext: true,
+      last: null
     }
-  }
-  renderSquare(i) {
-    return (
-      <Square
-        value={this.state.squares[i]}
-        onClick={() => this.handleClick(i)}
-      />
-    );
   }
 
   render() {
-    const winner = calculateWinner(this.state.squares);
+    const winner = calculateWinner(this.state.squares, this.state.last);
     const whosNext = this.state.xIsNext ? 'X' : 'O';
     const played = this.state.squares.filter((i) => i !== null).length;
     let status, classComplement;
@@ -79,13 +73,15 @@ class Board extends Component {
           {
             [0, 1, 2, 3].map(layer => {
               return (
-              <div className="board-layer">
+              <div key={layer} className="board-layer">
                   {[0, 1, 2, 3].map(i => {
                     return <BoardRow
+                          key={i}
                           start={4 * i + 16 * layer}
                           size={4}
                           squares={this.state.squares}
                           onClick={(i) => this.handleClick(i)}
+                          last={this.state.last}
                         />;
                   })}
               </div>
@@ -97,12 +93,16 @@ class Board extends Component {
   }
 
   handleClick(i) {
-    const { squares, xIsNext } = this.state;
-    if (calculateWinner(squares) || squares[i] !== null) {
+    const { squares, xIsNext, last } = this.state;
+    if (calculateWinner(squares, last) || squares[i] !== null) {
       return;
     }
     squares[i] = xIsNext ? 'X' : 'O';
-    this.setState({squares: squares, xIsNext: !xIsNext});
+    this.setState({
+      squares: squares,
+      xIsNext: !xIsNext,
+      last: i
+    });
   }
 }
 
@@ -118,21 +118,161 @@ class Game extends Component {
   }
 }
 
-function calculateWinner(squares) {
-  const lines = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6],
-  ];
-  for (let i = 0; i < lines.length; i++) {
-    const [a, b, c] = lines[i];
-    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
+function toXYZ(i) {
+  const z = Math.floor(i / 16);
+  const rem = i % 16;
+  const y = Math.floor(rem / 4);
+  const x = rem % 4;
+  return {x:x, y:y, z:z};
+}
+
+function toI(x, y, z) {
+  return 16 * z + 4 * y + x;
+}
+
+function calculateWinner(squares, last) {
+  const {x, y, z} = toXYZ(last);
+  console.log(last);
+
+  // has anyone won in lines?
+  let matching = 0;
+  for (let j = 0; j < 4; j++) {
+    if(squares[toI(j, y, z)] === squares[last]) {
+      matching++;
+    }
+  }
+  if (matching === 4) {
+    return squares[last];
+  }
+  // has anyone won in columns?
+  matching = 0;
+  for (let j = 0; j < 4; j++) {
+    if (squares[toI(x, j, z)] === squares[last]) {
+      matching++;
+    }
+  }
+  if (matching === 4) {
+    return squares[last];
+  }
+  // has anyone won in layers?
+  matching = 0;
+  for (let j = 0; j < 4; j++) {
+    if (squares[toI(x, y, j)] === squares[last]) {
+      matching++;
+    }
+  }
+  if (matching === 4) {
+    return squares[last];
+  }
+  // has anyone won in xy diag?
+  matching = 0;
+  if (x === y) {
+    for (let j = 0; j < 4; j++) {
+      if (squares[toI(j, j, z)] === squares[last]) {
+        matching++;
+      }
+    }
+    if (matching === 4) {
+      return squares[last];
+    }
+  }
+  // counter-diag...
+  if (x === 3 - y) {
+    for (let j = 0; j < 4; j++) {
+      if (squares[toI(j, 3 - j, z)] === squares[last]) {
+        matching++;
+      }
+    }
+    if (matching === 4) {
+      return squares[last];
+    }
+  }
+  // has anyone won in xz diag?
+  matching = 0;
+  if (x === z) {
+    for (let j = 0; j < 4; j++) {
+      if (squares[toI(j, y, j)] === squares[last]) {
+        matching++;
+      }
+    }
+    if (matching === 4) {
+      return squares[last];
+    }
+  }
+  // counter-diag...
+  if (x === 3 - z) {
+    for (let j = 0; j < 4; j++) {
+      if (squares[toI(j, y, 3 - j)] === squares[last]) {
+        matching++;
+      }
+    }
+    if (matching === 4) {
+      return squares[last];
+    }
+  }
+  // has anyone won in yz diag?
+  matching = 0;
+  if (y === z) {
+    for (let j = 0; j < 4; j++) {
+      if (squares[toI(x, j, j)] === squares[last]) {
+        matching++;
+      }
+    }
+    if (matching === 4) {
+      return squares[last];
+    }
+  }
+  // counter-diag...
+  if (y === 3 - z) {
+    for (let j = 0; j < 4; j++) {
+      if (squares[toI(x, j, 3 - j)] === squares[last]) {
+        matching++;
+      }
+    }
+    if (matching === 4) {
+      return squares[last];
+    }
+  }
+  // FINALLY, x = y = z, x = y = -z, etc...
+  matching = 0;
+  if (x === y && x === z) {
+    for (let j = 0; j < 4; j++) {
+      if (squares[toI(j, j, j)] === squares[last]) {
+        matching++;
+      }
+    }
+    if (matching === 4) {
+      return squares[last];
+    }
+  }
+  if (x === y && x === 3 - z) {
+    for (let j = 0; j < 4; j++) {
+      if (squares[toI(j, j, 3 - j)] === squares[last]) {
+        matching++;
+      }
+    }
+    if (matching === 4) {
+      return squares[last];
+    }
+  }
+  if (x === 3 - y && x === z) {
+    for (let j = 0; j < 4; j++) {
+      if (squares[toI(j, 3 - j, j)] === squares[last]) {
+        matching++;
+      }
+    }
+    if (matching === 4) {
+      return squares[last];
+    }
+  }
+  if (x === 3 - y && x === 3 - z) {
+    for (let j = 0; j < 4; j++) {
+      if (squares[toI(j, 3 - j, 3 - j)] === squares[last]) {
+        matching++;
+      }
+    }
+    if (matching === 4) {
+      return squares[last];
     }
   }
   return null;
