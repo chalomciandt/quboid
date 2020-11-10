@@ -1,0 +1,29 @@
+.board-layer {
+  margin-bottom: 15px;
+}
+
+.status {
+  font-size: 28px;
+  color: #FDFFFC;
+  margin-bottom: 10px;
+}
+
+.status-X {
+  color: #2EC4B6;
+}
+
+.status-O {
+  color: #FF9F1C;
+}
+
+.status-DRAW {
+  color: #E71D36;
+}
+
+.game {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: 100%;
+}
