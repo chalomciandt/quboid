@@ -49,6 +49,11 @@ class Lobby extends Component {
     });
   }
 
+  submitNameForm(name) {
+    this.setState({ whoami: name });
+    this.state.socket.emit("newplayer", name);
+  }
+
   render() {
     return (
       <div className="lobby">
@@ -58,9 +63,10 @@ class Lobby extends Component {
         <h1>Welcome to Quboid!</h1>
         <PlayerList
           players={this.state.players}
+          whoami={this.state.whoami}
         />
         <NameForm
-          socket={this.state.socket}
+          handleSubmit={(name) => this.submitNameForm(name)}
         />
       </div>
     );

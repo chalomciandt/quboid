@@ -2,27 +2,24 @@ import React, { Component } from 'react';
 import './index.css';
 
 export default class NameForm extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { value: '', show: true };
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
+  state = {
+    value: '',
+    show: true
   }
-
   handleChange(event) {
     this.setState({ value: event.target.value });
   }
   handleSubmit(event) {
-    this.props.socket.emit("newplayer", this.state.value);
+    const { value } = this.state;
+    this.props.handleSubmit(value);
     this.setState({ show: false });
     event.preventDefault();
   }
-
   render() {
     return (
-      <form className={"nameForm " + (this.state.show ? 'show' : '')} onSubmit={this.handleSubmit}>
+      <form className={"nameForm " + (this.state.show ? 'show' : '')} onSubmit={(e) => this.handleSubmit(e)}>
         <h2>What is your name?</h2>
-        <input type="text" value={this.state.value} onChange={this.handleChange} />
+        <input type="text" value={this.props.value} onChange={(e) => this.handleChange(e)} />
         <input type="submit" className="submit" value="Submit" />
       </form>
     );
