@@ -4,27 +4,3 @@ body {
   background-color: #011627;
   color: #FDFFFC;
 }
-
-.lobby {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  height: 100%;
-}
-
-.playerList {
-  border-radius: 10px;
-  border: 1px solid  #313637;
-  margin: 10px;
-  padding: 10px;
-}
-
-.playerAvatar {
-  margin-bottom: 10px;
-  cursor: pointer;
-}
-
-.playerName {
-  margin-left: 5px;
-}

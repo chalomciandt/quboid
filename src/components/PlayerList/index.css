@@ -1,0 +1,20 @@
+.playerList {
+  border-radius: 10px;
+  border: 1px solid  #313637;
+  margin: 10px;
+  padding: 10px;
+}
+
+.playerAvatar {
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.playerName {
+  margin-left: 5px;
+}
+
+.playerName.myself {
+  color: #ADAFAC;
+  cursor: default;
+}
