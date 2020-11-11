@@ -2,8 +2,44 @@ body {
   font: 14px "Century Gothic", Futura, sans-serif;
   margin: 20px;
   background-color: #011627;
+  color: #FDFFFC;
 }
 
-p {
-  color: #FDFFFC;
+.nameForm {
+  display: none;
+  opacity: 0;
+  transition: 1s;
+}
+
+.nameForm.show {
+  display: block;
+  opacity: 1;
+}
+
+.clock {
+  float: right;
+  font: 10px "Lucida Console", monospace;
+}
+
+.lobby {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: 100%;
+}
+
+.playerList {
+  border-radius: 10px;
+  border: 1px solid  #313637;
+  margin: 10px;
+  padding: 10px;
+}
+
+.playerAvatar {
+  margin-bottom: 10px;
+}
+
+.playerName {
+  margin-left: 5px;
 }
