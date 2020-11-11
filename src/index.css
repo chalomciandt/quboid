@@ -22,6 +22,7 @@ body {
 
 .playerAvatar {
   margin-bottom: 10px;
+  cursor: pointer;
 }
 
 .playerName {

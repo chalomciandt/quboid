@@ -9,6 +9,16 @@ import NameForm from './components/NameForm';
 const ENDPOINT = "http://localhost:4000";
 
 class PlayerList extends Component {
+  startChallenge(player) {
+    const { whoami } = this.props;
+    if (!whoami) {
+      alert ("You need to choose a username first!");
+    }
+    if (whoami === player) {
+      alert ("You can't challenge yourself!");
+    }
+    this.props.sendChallenge(player);
+  }
   render() {
     const { players } = this.props;
     return (
@@ -17,12 +27,12 @@ class PlayerList extends Component {
         <p>Click on a player name to challenge them!</p>
         {
           players.map(player => {
-            console.log(player);
             return (<div
               key={player}
               className="playerAvatar"
+              onClick={() => this.startChallenge(player)}
             >
-              <i class="fas fa-2x fa-user-circle"></i>
+              <i className="fas fa-2x fa-user-circle"></i>
               <span className="playerName">{player}</span>
             </div>);
           })
@@ -33,19 +43,41 @@ class PlayerList extends Component {
 }
 
 class Lobby extends Component {
+  render() {
+    return (
+      <div className="lobby">
+        <Clock
+          time={this.props.parentState.time}
+        />
+        <h1>Welcome to Quboid!</h1>
+        <PlayerList
+          players={this.props.parentState.players}
+          whoami={this.props.parentState.whoami}
+          sendChallenge={this.props.sendChallenge}
+        />
+        <NameForm
+          handleSubmit={this.props.submitNameForm}
+        />
+      </div>
+    );
+  }
+}
+
+class GameMaster extends Component {
   constructor(props) {
     super(props);
     this.state = {
       time: '',
       players: [],
       socket: socketIOClient(ENDPOINT),
-      whoami: ''
+      whoami: '',
+      showLobby: true
     }
     this.state.socket.on("clock", time => {
-      this.setState({time: time});
+      this.setState({ time: time });
     });
     this.state.socket.on("lobbyplayers", players => {
-      this.setState({players: players});
+      this.setState({ players: players });
     });
   }
 
@@ -54,19 +86,21 @@ class Lobby extends Component {
     this.state.socket.emit("newplayer", name);
   }
 
+  sendChallenge(name) {
+    this.state.socket.emit("sendchallenge", {whoami: this.state.whoami, challenge: name});
+  }
+
   render() {
     return (
-      <div className="lobby">
-        <Clock
-          time={this.state.time}
+      <div className="game-master">
+        <Lobby
+          show={this.state.showLobby}
+          submitNameForm={(name) => this.submitNameForm(name)}
+          sendChallenge={(name) => this.sendChallenge(name)}
+          parentState={this.state}
         />
-        <h1>Welcome to Quboid!</h1>
-        <PlayerList
-          players={this.state.players}
-          whoami={this.state.whoami}
-        />
-        <NameForm
-          handleSubmit={(name) => this.submitNameForm(name)}
+        <Board
+          show={(! this.state.showLobby)}
         />
       </div>
     );
@@ -74,6 +108,6 @@ class Lobby extends Component {
 }
 
 ReactDOM.render(
-  <Lobby />,
+  <GameMaster />,
   document.getElementById('root')
 );

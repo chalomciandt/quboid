@@ -30,9 +30,8 @@ export default class Board extends Component {
       status = 'Next player: ' + whosNext;
       classComplement = whosNext;
     }
-
     return (
-      <div className="game">
+      <div className={"game " + (this.props.show ? 'show' : '')}>
         <div className={`status status-${classComplement}`}>{status}</div>
         {
           [0, 1, 2, 3].map(layer => {
