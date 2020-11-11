@@ -1,0 +1,13 @@
+.nameForm {
+  opacity: 0;
+  transition: all 0.2s;
+}
+
+.nameForm .submit {
+  display: none;
+}
+
+.nameForm.show {
+  display: block;
+  opacity: 1;
+}
