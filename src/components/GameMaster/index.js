@@ -35,7 +35,10 @@ export default class GameMaster extends Component {
     });
     this.state.socket.on("sendmove", data => {
       const { x, o, squares, xIsNext } = this.state;
-      if (data.player !== x && data.player !== o) {
+      if (xIsNext && data.player !== x) {
+        return;
+      }
+      if (!xIsNext && data.player !== o) {
         return;
       }
       console.log(data.player + " played " + data.move);
