@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import socketIOClient from "socket.io-client";
 import Lobby from '../Lobby';
 import Board from '../Board';
-const ENDPOINT = "http://localhost:4000";
+const ENDPOINT = "https://quboid-backend.herokuapp.com/";
 
 export default class GameMaster extends Component {
   constructor(props) {
