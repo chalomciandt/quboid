@@ -13,23 +13,51 @@ export default class Board extends Component {
     }
   }
 
-  render() {
+  nextPlayer() {
+    const { xIsNext } = this.props;
+    const { x, o } = this.props.parentState;
+    if (xIsNext) {
+      return x;
+    }
+    return o;
+  }
+
+  renderStatus() {
     const { squares, xIsNext, last } = this.state;
+    const { x, o, whoami } = this.props.parentState;
     const winner = calculateWinner(squares, last);
     const whosNext = xIsNext ? 'X' : 'O';
     const played = squares.filter((i) => i !== null).length;
     let status, classComplement;
 
     if (winner) {
-      status = 'Winner: ' + winner;
+      const winnername = (winner === 'X' ? x : o);
+      status = 'Winner: ' + winnername;
       classComplement = winner;
     } else if (played === 4 * 4 * 4) {
       status = 'Draw!';
       classComplement = 'DRAW';
     } else {
-      status = 'Next player: ' + whosNext;
+      if (this.nextPlayer() === whoami) {
+        status = 'Your move!'
+      } else {
+        const waiting = (whosNext === 'X' ? x : o);
+        status = 'Waiting for ' + waiting;
+      }
       classComplement = whosNext;
     }
+
+    return { status: status, classComplement: classComplement };
+  }
+
+  render() {
+    if (!this.props.show) {
+      return null;
+    }
+    const { squares, last } = this.state;
+    const { x, o } = this.props.parentState;
+    const { status, classComplement } = this.renderStatus();
+
     return (
       <div className={"game " + (this.props.show ? 'show' : '')}>
         <div className={`status status-${classComplement}`}>{status}</div>
@@ -51,6 +79,9 @@ export default class Board extends Component {
             );
           })
         }
+        <p className="players">
+          <span className="status-X">{x}</span> vs <span className="status-O">{o}</span>
+        </p>
       </div>
     );
   }
@@ -60,6 +91,12 @@ export default class Board extends Component {
     if (calculateWinner(squares, last) || squares[i] !== null) {
       return;
     }
+    const { whoami } = this.props.parentState;
+    if (this.nextPlayer() !== whoami) {
+      return;
+    }
+
+    this.props.sendMove(i);
     squares[i] = xIsNext ? 'X' : 'O';
     this.setState({
       squares: squares,

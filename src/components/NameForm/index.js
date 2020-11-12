@@ -11,7 +11,9 @@ export default class NameForm extends Component {
   }
   handleSubmit(event) {
     const { value } = this.state;
-    this.props.handleSubmit(value);
+    // Adds a random termination to the chosen name to avoid duplicate names in the server
+    const uniqueName = value + "#" + (Math.floor(Math.random() * 4095).toString(16));
+    this.props.handleSubmit(uniqueName);
     this.setState({ show: false });
     event.preventDefault();
   }
