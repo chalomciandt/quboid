@@ -15,7 +15,10 @@ export default class GameMaster extends Component {
       whoami: '',
       x: '',
       o: '',
-      showLobby: true
+      showLobby: true,
+      squares: Array(4 * 4 * 4).fill(null),
+      xIsNext: true,
+      last: null
     }
     this.state.socket.on("clock", time => {
       this.setState({ time: time });
@@ -29,6 +32,19 @@ export default class GameMaster extends Component {
         return;
       }
       this.setState({ x: data.x, o: data.o, showLobby: false });
+    });
+    this.state.socket.on("sendmove", data => {
+      const { x, o, squares, xIsNext } = this.state;
+      if (data.player !== x && data.player !== o) {
+        return;
+      }
+      console.log(data.player + " played " + data.move);
+      squares[data.move] = xIsNext ? 'X' : 'O';
+      this.setState({
+        squares: squares,
+        xIsNext: !xIsNext,
+        last: data.move
+      });
     });
   }
 

@@ -4,18 +4,8 @@ import BoardRow from '../BoardRow';
 import calculateWinner from './calculateWinner';
 
 export default class Board extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      squares: Array(4 * 4 * 4).fill(null),
-      xIsNext: true,
-      last: null
-    }
-  }
-
   nextPlayer() {
-    const { xIsNext } = this.props;
-    const { x, o } = this.props.parentState;
+    const { x, o, xIsNext } = this.props.parentState;
     if (xIsNext) {
       return x;
     }
@@ -23,8 +13,7 @@ export default class Board extends Component {
   }
 
   renderStatus() {
-    const { squares, xIsNext, last } = this.state;
-    const { x, o, whoami } = this.props.parentState;
+    const { x, o, whoami, squares, xIsNext, last } = this.props.parentState;
     const winner = calculateWinner(squares, last);
     const whosNext = xIsNext ? 'X' : 'O';
     const played = squares.filter((i) => i !== null).length;
@@ -54,8 +43,7 @@ export default class Board extends Component {
     if (!this.props.show) {
       return null;
     }
-    const { squares, last } = this.state;
-    const { x, o } = this.props.parentState;
+    const { x, o, squares, last } = this.props.parentState;
     const { status, classComplement } = this.renderStatus();
 
     return (
@@ -87,21 +75,14 @@ export default class Board extends Component {
   }
 
   handleClick(i) {
-    const { squares, xIsNext, last } = this.state;
+    const { squares, last, whoami } = this.props.parentState;
     if (calculateWinner(squares, last) || squares[i] !== null) {
       return;
     }
-    const { whoami } = this.props.parentState;
     if (this.nextPlayer() !== whoami) {
       return;
     }
 
     this.props.sendMove(i);
-    squares[i] = xIsNext ? 'X' : 'O';
-    this.setState({
-      squares: squares,
-      xIsNext: !xIsNext,
-      last: i
-    });
   }
 }
